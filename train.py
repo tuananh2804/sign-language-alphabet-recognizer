@@ -24,9 +24,10 @@ import tarfile
 
 import numpy as np
 from six.moves import urllib
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 from tensorflow.python.framework import graph_util
+from tensorflow.python.framework import graph_util_impl
 from tensorflow.python.framework import tensor_shape
 from tensorflow.python.platform import gfile
 from tensorflow.python.util import compat
@@ -857,7 +858,7 @@ def main(_):
 
         # Write out the trained graph and labels with the weights stored as
         # constants.
-        output_graph_def = graph_util.convert_variables_to_constants(
+        output_graph_def = tf.compat.v1.graph_util.convert_variables_to_constants(
                 sess, graph.as_graph_def(), [FLAGS.final_tensor_name])
         with gfile.FastGFile(FLAGS.output_graph, 'wb') as f:
             f.write(output_graph_def.SerializeToString())

@@ -1,11 +1,11 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import sys
 import os
 
 
 # Disable tensorflow compilation warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 image_path = sys.argv[1]
 
