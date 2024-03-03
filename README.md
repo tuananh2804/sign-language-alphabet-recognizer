@@ -5,6 +5,7 @@
 ## Requirements
 
 Bước 1:cài packages dùng pip
+```
 * opencv
 * tensorflow
 * matplotlib
