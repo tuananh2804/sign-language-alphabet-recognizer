@@ -7,21 +7,21 @@ import base64
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow.compat.v1 as tf
 
-label_lines = [line.rstrip() for line
+class Service:
+    def __init__(self):
+        self.label_lines = [line.rstrip() for line
                    in tf.gfile.GFile("logs/trained_labels.txt")]
+        self.sess = tf.Session()
+        with tf.gfile.FastGFile("logs/trained_graph.pb", 'rb') as f:
+            graph_def = tf.GraphDef()
+            graph_def.ParseFromString(f.read())
+            _ = tf.import_graph_def(graph_def, name='')
 
-def predict_image(image_data):
-    
-    with tf.gfile.FastGFile("logs/trained_graph.pb", 'rb') as f:
-        graph_def = tf.GraphDef()
-        graph_def.ParseFromString(f.read())
-        _ = tf.import_graph_def(graph_def, name='')
-    
-    with tf.Session() as sess:
-        
-        softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
+    def predict_image(self, image_data):
 
-        predictions = sess.run(softmax_tensor, \
+        softmax_tensor = self.sess.graph.get_tensor_by_name('final_result:0')
+
+        predictions = self.sess.run(softmax_tensor, \
                 {'DecodeJpeg/contents:0': image_data})
         
         nparr = np.frombuffer(image_data, np.uint8)
@@ -38,9 +38,12 @@ def predict_image(image_data):
         max_score = 0.0
         res = ''
         for node_id in top_k:
-            human_string = label_lines[node_id]
+            human_string = self.label_lines[node_id]
             score = predictions[0][node_id]
             if score > max_score:
                 max_score = score
                 res = human_string
-    return res, max_score
+        return res, max_score
+
+    def close_session(self):
+        self.sess.close()

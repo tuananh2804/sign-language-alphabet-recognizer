@@ -10,10 +10,12 @@ import tensorflow.compat.v1 as tf
 
 app = Flask(__name__)
 
+service = ServerService.Service()
+
 @app.route('/predict', methods=['POST'])
 def predict_image():
     image_data = request.files['image'].read()
-    predicted_char, score = ServerService.predict_image(image_data)
+    predicted_char, score = service.predict_image(image_data=image_data)
 
     return jsonify({'predicted_char': predicted_char, 'score': float(score)})
 
