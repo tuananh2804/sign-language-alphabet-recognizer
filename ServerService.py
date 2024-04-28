@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 from flask import Flask, request, jsonify
 import base64
+from io import BytesIO
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow.compat.v1 as tf
@@ -20,18 +21,33 @@ class Service:
     def predict_image(self, image_data):
 
         softmax_tensor = self.sess.graph.get_tensor_by_name('final_result:0')
-
-        predictions = self.sess.run(softmax_tensor, \
-                {'DecodeJpeg/contents:0': image_data})
         
         nparr = np.frombuffer(image_data, np.uint8)
-        img_fliped = cv2.flip(nparr, 1)
-        img = cv2.imdecode(img_fliped, cv2.IMREAD_COLOR)
+        img = cv2.imdecode(nparr, -1)
+        img = cv2.flip(img, 1)
 
         x1, y1, x2, y2 = 100, 100, 300, 300
-        img_cropped = img[y1:y2, x1:x2]
+        img_cropped = img[y1:y2, x1:x2] 
+        
+        # # Lưu ảnh đã cắt vào thư mục "image_cropped"
+        # cropped_folder = 'image_cropped'
+        # if not os.path.exists(cropped_folder):
+        #     os.makedirs(cropped_folder)
+
+        # # Đếm số lượng ảnh đã cắt trong thư mục
+        # num_cropped_images = len([name for name in os.listdir(cropped_folder) if os.path.isfile(os.path.join(cropped_folder, name))])
+
+        # # Tạo tên tệp tin mới cho ảnh đã cắt
+        # cropped_image_filename = str(num_cropped_images + 1) + '.jpg'
+
+        # # Lưu ảnh đã cắt với tên mới vào thư mục
+        # cropped_image_path = os.path.join(cropped_folder, cropped_image_filename)
+        # cv2.imwrite(cropped_image_path, img_cropped)
 
         image_data = cv2.imencode('.jpg', img_cropped)[1].tostring()
+        
+        predictions = self.sess.run(softmax_tensor, \
+                {'DecodeJpeg/contents:0': image_data})
 
         top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
 
