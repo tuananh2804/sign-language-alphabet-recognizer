@@ -14,8 +14,7 @@ service = ServerService.Service()
 
 @app.route('/predict', methods=['POST'])
 def predict_image():
-    image_data = request.files['image'].read()
-    
+    image_data = request.files['image'].read() 
     
     # # Lưu ảnh vào thư mục "image_request"
     # image_folder = 'image_request'
