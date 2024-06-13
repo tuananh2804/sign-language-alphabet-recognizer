@@ -7,6 +7,7 @@ import ServerService
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow.compat.v1 as tf
+import random
 
 app = Flask(__name__)
 
@@ -16,26 +17,22 @@ service = ServerService.Service()
 def predict_image():
     image_data = request.files['image'].read() 
     
-    # # Lưu ảnh vào thư mục "image_request"
-    # image_folder = 'image_request'
-    # if not os.path.exists(image_folder):
-    #     os.makedirs(image_folder)
-
-    # # Đếm số lượng ảnh hiện có trong thư mục
-    # num_images = len([name for name in os.listdir(image_folder) if os.path.isfile(os.path.join(image_folder, name))])
-
-    # # Tạo tên tệp tin mới cho ảnh
-    # image_filename = str(num_images + 1) + '.jpg'  # Định dạng tùy thuộc vào loại ảnh
-
-    # # Lưu ảnh với tên mới vào thư mục
-    # image_path = os.path.join(image_folder, image_filename)
-    # with open(image_path, 'wb') as f:
-    #     f.write(image_data)
-    
-    
     predicted_char, score = service.predict_image(image_data=image_data)
+    
+    print(predicted_char, end="\n");
 
     return jsonify({'predicted_char': predicted_char, 'score': float(score)})
+    
+    # random_number = 1
+    # if random_number == 1:
+    #     print("1", end="\n")
+    #     return jsonify({'predicted_char': 'b', 'score': 'float(0.5)'})
+    # elif random_number == 2:
+    #     print("2", end="\n")
+    #     return jsonify({'predicted_char': 'space', 'score': 'float(0.5)'})
+    # else:
+    #     print("3", end="\n")
+    #     return jsonify({'predicted_char': 'del', 'score': 'float(0.5)'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
