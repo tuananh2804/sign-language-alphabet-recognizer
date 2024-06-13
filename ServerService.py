@@ -30,8 +30,8 @@ class Service:
         img_cropped = img[y1:y2, x1:x2] 
         
         # Tọa độ của ô vuông (x1, y1, x2, y2)
-        top_left = (100, 100)  # Góc trên bên trái
-        bottom_right = (300, 300)  # Góc dưới bên phải
+        top_left = (90, 90)  # Góc trên bên trái
+        bottom_right = (310, 310)  # Góc dưới bên phải
 
         # Màu xanh lá cây (BGR format)
         color = (0, 255, 0)
